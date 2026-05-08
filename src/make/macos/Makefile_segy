@@ -1,0 +1,40 @@
+
+# SEGY lib
+SEGYDIR = src/cs/segy
+
+OBJ_SEGY =  $(OBJDIR)/csSegyTraceHeader.o \
+			$(OBJDIR)/csSegyHdrMap.o \
+			$(OBJDIR)/csSegyWriter.o \
+			$(OBJDIR)/csSegyBinHeader.o \
+			$(OBJDIR)/csSegyReader.o
+
+CXXFLAGS_SEGY   = -fPIC $(COMMON_FLAGS) -I"src/cs/geolib" -I"src/cs/segy"
+LIB_SEGY = libsegy.so
+
+default: $(LIBDIR)/$(LIB_SEGY)
+
+clean:
+	${RM} $(OBJ_SEGY)
+
+bleach: clean
+	${RM} $(LIBDIR)/$(LIB_SEGY)
+
+### SEGY ###
+
+$(LIBDIR)/$(LIB_SEGY): $(OBJ_SEGY)
+	$(CPP) -fPIC -shared -Wl,-$(SONAME),$(LIBDIR)/$(LIB_SEGY) -o $(LIBDIR)/$(LIB_SEGY) $(OBJ_SEGY) -L$(LIBDIR) -lgeolib -lc
+
+$(OBJDIR)/csSegyTraceHeader.o: $(SEGYDIR)/csSegyTraceHeader.cc $(SEGYDIR)/csSegyTraceHeader.h
+	$(CPP) -c $(SEGYDIR)/csSegyTraceHeader.cc -o $(OBJDIR)/csSegyTraceHeader.o $(CXXFLAGS_SEGY)
+
+$(OBJDIR)/csSegyHdrMap.o: $(SEGYDIR)/csSegyHdrMap.cc $(SEGYDIR)/csSegyHdrMap.h
+	$(CPP) -c $(SEGYDIR)/csSegyHdrMap.cc -o $(OBJDIR)/csSegyHdrMap.o $(CXXFLAGS_SEGY)
+
+$(OBJDIR)/csSegyReader.o: $(SEGYDIR)/csSegyReader.cc $(SEGYDIR)/csSegyReader.h $(SEGYDIR)/csSegyDefines.h
+	$(CPP) -c $(SEGYDIR)/csSegyReader.cc -o $(OBJDIR)/csSegyReader.o $(CXXFLAGS_SEGY)
+
+$(OBJDIR)/csSegyBinHeader.o: $(SEGYDIR)/csSegyBinHeader.cc $(SEGYDIR)/csSegyBinHeader.h
+	$(CPP) -c $(SEGYDIR)/csSegyBinHeader.cc -o $(OBJDIR)/csSegyBinHeader.o $(CXXFLAGS_SEGY)
+
+$(OBJDIR)/csSegyWriter.o: $(SEGYDIR)/csSegyWriter.cc $(SEGYDIR)/csSegyWriter.h
+	$(CPP) -c $(SEGYDIR)/csSegyWriter.cc -o $(OBJDIR)/csSegyWriter.o $(CXXFLAGS_SEGY)

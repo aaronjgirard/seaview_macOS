@@ -1,0 +1,76 @@
+
+# SEGD lib
+SEGDDIR = src/cs/segd
+
+OBJ_SEGD = $(OBJDIR)/csExternalHeader.o \
+	  $(OBJDIR)/csGCS90Header.o \
+	  $(OBJDIR)/csNavHeader.o \
+	  $(OBJDIR)/csSegdHeader.o \
+	  $(OBJDIR)/csSegdFunctions.o \
+	  $(OBJDIR)/csSegdReader.o \
+	  $(OBJDIR)/csSegdHeader_GEORES.o \
+	  $(OBJDIR)/csSegdHeader_SEAL.o \
+	  $(OBJDIR)/csSegdHeader_DIGISTREAMER.o \
+	  $(OBJDIR)/csSegdHeader_FAIRFIELD.o \
+	  $(OBJDIR)/csNavInterface.o \
+	  $(OBJDIR)/csSegdBuffer.o \
+	  $(OBJDIR)/csStandardSegdHeader.o \
+	  $(OBJDIR)/csSegdHdrValues.o
+
+CXXFLAGS_SEGD   = -fPIC $(COMMON_FLAGS) -I"src/cs/geolib" -I"src/cs/segd"
+LIB_SEGD = libsegd.so
+
+default: $(LIBDIR)/$(LIB_SEGD)
+
+clean:
+	${RM} $(OBJ_SEGD)
+
+bleach: clean
+	${RM} $(LIBDIR)/$(LIB_SEGD)
+
+### SEGD ###
+
+$(LIBDIR)/$(LIB_SEGD): $(OBJ_SEGD)
+	$(CPP) $(GLOBAL_FLAGS) -fPIC -shared -Wl,-$(SONAME),$(LIB_SEGD) -o $(LIBDIR)/$(LIB_SEGD) $(OBJ_SEGD) -L$(LIBDIR) -lgeolib -lc
+
+$(OBJDIR)/csSegdHeader_SEAL.o:	$(SEGDDIR)/csSegdHeader_SEAL.cc $(SEGDDIR)/csSegdHeader_SEAL.h
+			$(CPP) $(SEGDDIR)/csSegdHeader_SEAL.cc -c -o $(OBJDIR)/csSegdHeader_SEAL.o $(CXXFLAGS_SEGD)
+
+$(OBJDIR)/csSegdHeader_DIGISTREAMER.o:	$(SEGDDIR)/csSegdHeader_DIGISTREAMER.cc $(SEGDDIR)/csSegdHeader_DIGISTREAMER.h
+			$(CPP) $(SEGDDIR)/csSegdHeader_DIGISTREAMER.cc -c -o $(OBJDIR)/csSegdHeader_DIGISTREAMER.o $(CXXFLAGS_SEGD)
+
+$(OBJDIR)/csSegdHeader.o:	$(SEGDDIR)/csSegdHeader.cc $(SEGDDIR)/csSegdHeader.h
+			$(CPP) $(SEGDDIR)/csSegdHeader.cc -c -o $(OBJDIR)/csSegdHeader.o $(CXXFLAGS_SEGD)
+
+$(OBJDIR)/csSegdBuffer.o:	$(SEGDDIR)/csSegdBuffer.cc $(SEGDDIR)/csSegdBuffer.h
+			$(CPP) $(SEGDDIR)/csSegdBuffer.cc -c -o $(OBJDIR)/csSegdBuffer.o $(CXXFLAGS_SEGD)
+
+$(OBJDIR)/csExternalHeader.o:	$(SEGDDIR)/csExternalHeader.cc $(SEGDDIR)/csExternalHeader.h
+			$(CPP) $(SEGDDIR)/csExternalHeader.cc -c -o $(OBJDIR)/csExternalHeader.o $(CXXFLAGS_SEGD)
+
+$(OBJDIR)/csSegdReader.o:	$(SEGDDIR)/csSegdReader.cc $(SEGDDIR)/csSegdReader.h
+			$(CPP) $(SEGDDIR)/csSegdReader.cc -c -o $(OBJDIR)/csSegdReader.o $(CXXFLAGS_SEGD)
+
+$(OBJDIR)/csSegdFunctions.o:	$(SEGDDIR)/csSegdFunctions.cc $(SEGDDIR)/csSegdFunctions.h
+			$(CPP) $(SEGDDIR)/csSegdFunctions.cc -c -o $(OBJDIR)/csSegdFunctions.o $(CXXFLAGS_SEGD)
+
+$(OBJDIR)/csGCS90Header.o:	$(SEGDDIR)/csGCS90Header.cc $(SEGDDIR)/csGCS90Header.h
+			$(CPP) $(SEGDDIR)/csGCS90Header.cc -c -o $(OBJDIR)/csGCS90Header.o $(CXXFLAGS_SEGD)
+
+$(OBJDIR)/csNavInterface.o:	$(SEGDDIR)/csNavInterface.cc $(SEGDDIR)/csNavInterface.h
+			$(CPP) $(SEGDDIR)/csNavInterface.cc -c -o $(OBJDIR)/csNavInterface.o $(CXXFLAGS_SEGD)
+
+$(OBJDIR)/csNavHeader.o:	$(SEGDDIR)/csNavHeader.cc $(SEGDDIR)/csNavHeader.h
+			$(CPP) $(SEGDDIR)/csNavHeader.cc -c -o $(OBJDIR)/csNavHeader.o $(CXXFLAGS_SEGD)
+
+$(OBJDIR)/csSegdHeader_GEORES.o:	$(SEGDDIR)/csSegdHeader_GEORES.cc $(SEGDDIR)/csSegdHeader_GEORES.h
+			$(CPP) $(SEGDDIR)/csSegdHeader_GEORES.cc -c -o $(OBJDIR)/csSegdHeader_GEORES.o $(CXXFLAGS_SEGD)
+
+$(OBJDIR)/csSegdHeader_FAIRFIELD.o:	$(SEGDDIR)/csSegdHeader_FAIRFIELD.cc $(SEGDDIR)/csSegdHeader_FAIRFIELD.h
+			$(CPP) $(SEGDDIR)/csSegdHeader_FAIRFIELD.cc -c -o $(OBJDIR)/csSegdHeader_FAIRFIELD.o $(CXXFLAGS_SEGD)
+
+$(OBJDIR)/csStandardSegdHeader.o:	$(SEGDDIR)/csStandardSegdHeader.cc $(SEGDDIR)/csStandardSegdHeader.h
+			$(CPP) $(SEGDDIR)/csStandardSegdHeader.cc -c -o $(OBJDIR)/csStandardSegdHeader.o $(CXXFLAGS_SEGD)
+
+$(OBJDIR)/csSegdHdrValues.o:	$(SEGDDIR)/csSegdHdrValues.cc $(SEGDDIR)/csSegdHdrValues.h
+			$(CPP) $(SEGDDIR)/csSegdHdrValues.cc -c -o $(OBJDIR)/csSegdHdrValues.o $(CXXFLAGS_SEGD)

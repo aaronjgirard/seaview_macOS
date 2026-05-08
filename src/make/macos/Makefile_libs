@@ -1,0 +1,410 @@
+OBJ_GEOLIB  = $(OBJDIR)/geolib_endian.o \
+			$(OBJDIR)/methods_linefit.o \
+			$(OBJDIR)/geolib_mem.o \
+			$(OBJDIR)/geolib_string_utils.o \
+			$(OBJDIR)/csEquationSolver.o \
+			$(OBJDIR)/methods_polarity_correction.o \
+			$(OBJDIR)/methods_rotation.o \
+			$(OBJDIR)/svd_decomposition.o \
+			$(OBJDIR)/svd_linsolve.o \
+			$(OBJDIR)/csSelectionFieldDouble.o \
+			$(OBJDIR)/csSelectionFieldInt.o \
+			$(OBJDIR)/csSelection.o \
+			$(OBJDIR)/csException.o \
+			$(OBJDIR)/csToken.o \
+			$(OBJDIR)/csTimer.o \
+			$(OBJDIR)/methods_sampleInterpolation.o \
+			$(OBJDIR)/methods_number_conversions.o \
+			$(OBJDIR)/csFlexNumber.o \
+			$(OBJDIR)/methods_orientation.o \
+			$(OBJDIR)/csTable.o \
+			$(OBJDIR)/csTableAll.o \
+			$(OBJDIR)/csTableNew.o \
+			$(OBJDIR)/csNMOCorrection.o \
+			$(OBJDIR)/cseis_curveFitting.o \
+			$(OBJDIR)/csRotation.o \
+			$(OBJDIR)/csTimeStretch.o \
+			$(OBJDIR)/methods_ccp.o \
+			$(OBJDIR)/methods_pzsum.o \
+			$(OBJDIR)/csFileUtils.o \
+			$(OBJDIR)/csFlexHeader.o \
+			$(OBJDIR)/csStandardHeaders.o \
+			$(OBJDIR)/csHeaderInfo.o \
+			$(OBJDIR)/csAbsoluteTime.o \
+			$(OBJDIR)/csDespike.o \
+			$(OBJDIR)/geolib_math.o \
+			$(OBJDIR)/csGeolibUtils.o \
+			$(OBJDIR)/csFFTTools.o \
+			$(OBJDIR)/csFFTTools_ORIG.o \
+			$(OBJDIR)/csFFTDesignature.o \
+			$(OBJDIR)/csSortManager.o \
+			$(OBJDIR)/csIOSelection.o \
+			$(OBJDIR)/csIReader.o \
+			$(OBJDIR)/csInterpolation.o \
+			$(OBJDIR)/csInterpolation2D.o \
+			$(OBJDIR)/csSplineInterpolation.o \
+			$(OBJDIR)/csSplineInterpolation2D.o \
+			$(OBJDIR)/csPoint2D.o \
+			$(OBJDIR)/csPoint3D.o \
+			$(OBJDIR)/csLine3D.o \
+			$(OBJDIR)/csProfile.o \
+			$(OBJDIR)/csPlane3D.o \
+			$(OBJDIR)/csReflector2D.o \
+			$(OBJDIR)/csFFT.o \
+			$(OBJDIR)/csTaper.o
+
+OBJ_SYSTEM  = $(OBJDIR)/csTrace.o \
+			$(OBJDIR)/csTracePool.o \
+			$(OBJDIR)/csTraceHeaderDef.o \
+			$(OBJDIR)/csTraceHeaderData.o \
+			$(OBJDIR)/csTraceHeader.o \
+			$(OBJDIR)/csModule.o \
+			$(OBJDIR)/csMethodRetriever.o \
+			$(OBJDIR)/csTraceGather.o \
+			$(OBJDIR)/csExecPhaseDef.o \
+			$(OBJDIR)/csUserConstant.o \
+			$(OBJDIR)/csUserParam.o \
+			$(OBJDIR)/csParamDef.o \
+			$(OBJDIR)/geolib_methods.o \
+			$(OBJDIR)/csSuperHeader.o \
+			$(OBJDIR)/csParamManager.o \
+			$(OBJDIR)/csTraceHeaderInfoPool.o \
+			$(OBJDIR)/csLogWriter.o \
+			$(OBJDIR)/csInitExecEnv.o \
+			$(OBJDIR)/csMemoryPoolManager.o \
+			$(OBJDIR)/csTraceData.o \
+			$(OBJDIR)/csSelectionManager.o \
+			$(OBJDIR)/csSeismicWriter.o \
+			$(OBJDIR)/csSeismicReader.o \
+			$(OBJDIR)/csStackUtil.o \
+			$(OBJDIR)/csTableManager.o \
+			$(OBJDIR)/csRandomDataReader.o \
+			$(OBJDIR)/csTableManagerNew.o
+
+OBJ_IO = $(OBJDIR)/csSeismicWriter_ver.o \
+			$(OBJDIR)/csSeismicIOConfig.o \
+			$(OBJDIR)/csSeismicReader_ver.o \
+			$(OBJDIR)/csSeismicReader_ver00.o \
+			$(OBJDIR)/csSeismicReader_ver01.o \
+			$(OBJDIR)/csSeismicReader_ver02.o \
+			$(OBJDIR)/csSeismicReader_ver03.o \
+			$(OBJDIR)/csSeismicReader_ver04.o \
+			$(OBJDIR)/csASCIIFileReader.o \
+			$(OBJDIR)/csP190Reader.o \
+			$(OBJDIR)/csRSFHeader.o \
+			$(OBJDIR)/csRSFReader.o \
+			$(OBJDIR)/csRSFWriter.o
+
+
+CXXFLAGS_GEOLIB = -fPIC $(COMMON_FLAGS) -I"src/cs/geolib"
+CXXFLAGS_SYSTEM = -fPIC $(COMMON_FLAGS) -I"src/cs/geolib" -I"src/cs/io" -I"src/cs/system"
+
+LIB_GEOLIB = libgeolib.so
+LIB_SYSTEM = libcseis_system.so
+LIB_SEGY   = libsegy.so
+
+default: $(LIBDIR)/$(LIB_GEOLIB) $(LIBDIR)/$(LIB_SYSTEM)
+
+clean:
+	${RM} $(OBJ_SYSTEM) $(OBJ_METHODS) $(OBJ_IO) $(OBJ_GEOLIB)
+
+bleach: clean
+	${RM} $(LIBDIR)/$(LIB_GEOLIB) $(LIBDIR)/$(LIB_SYSTEM)
+
+$(LIBDIR)/$(LIB_GEOLIB): $(OBJ_GEOLIB)
+	$(CPP) $(GLOBAL_FLAGS) -shared -Wl,-$(SONAME),$(LIB_GEOLIB) -o $(LIBDIR)/$(LIB_GEOLIB) $(OBJ_GEOLIB) $(LIB_FLAGS)
+
+$(LIBDIR)/$(LIB_SYSTEM): $(OBJ_SYSTEM) $(OBJ_IO) $(OBJ_METHODS)
+	$(CPP) $(GLOBAL_FLAGS) -shared -Wl,-$(SONAME),$(LIB_SYSTEM) -o $(LIBDIR)/$(LIB_SYSTEM) $(OBJ_SYSTEM) $(OBJ_IO) $(OBJ_METHODS) -L$(LIBDIR) -lc -lgeolib -ldl
+
+### GEOLIB ###
+
+$(OBJDIR)/geolib_endian.o: src/cs/geolib/geolib_endian.cc    src/cs/geolib/geolib_endian.h
+	$(CPP) -c src/cs/geolib/geolib_endian.cc -o $(OBJDIR)/geolib_endian.o $(CXXFLAGS_GEOLIB)
+
+$(OBJDIR)/methods_linefit.o: src/cs/geolib/methods_linefit.cc       src/cs/geolib/geolib_mem.h   src/cs/geolib/geolib_math.h
+	$(CPP) -c src/cs/geolib/methods_linefit.cc -o $(OBJDIR)/methods_linefit.o $(CXXFLAGS_GEOLIB)
+
+$(OBJDIR)/geolib_mem.o: src/cs/geolib/geolib_mem.cc src/cs/geolib/geolib_mem.h      
+	$(CPP) -c src/cs/geolib/geolib_mem.cc -o $(OBJDIR)/geolib_mem.o $(CXXFLAGS_GEOLIB)
+
+$(OBJDIR)/geolib_math.o: src/cs/geolib/geolib_math.cc src/cs/geolib/geolib_math.h      
+	$(CPP) -c src/cs/geolib/geolib_math.cc -o $(OBJDIR)/geolib_math.o $(CXXFLAGS_GEOLIB)
+
+$(OBJDIR)/geolib_string_utils.o: src/cs/geolib/geolib_string_utils.cc src/cs/geolib/geolib_string_utils.h    src/cs/geolib/csVector.h    src/cs/geolib/csException.h   src/cs/geolib/csCollection.h src/cs/geolib/geolib_math.h
+	$(CPP) -c src/cs/geolib/geolib_string_utils.cc -o $(OBJDIR)/geolib_string_utils.o $(CXXFLAGS_GEOLIB)
+
+$(OBJDIR)/csEquationSolver.o: src/cs/geolib/csEquationSolver.cc src/cs/geolib/csEquationSolver.h       src/cs/geolib/csToken.h    src/cs/geolib/csException.h   src/cs/geolib/csMathConstant.h src/cs/geolib/geolib_math.h src/cs/geolib/geolib_string_utils.h src/cs/geolib/csMathFunction.h   src/cs/geolib/csStack.h src/cs/geolib/csCollection.h src/cs/geolib/geolib_math.h   src/cs/geolib/csVector.h
+	$(CPP) -c src/cs/geolib/csEquationSolver.cc -o $(OBJDIR)/csEquationSolver.o $(CXXFLAGS_GEOLIB)
+
+$(OBJDIR)/methods_polarity_correction.o: src/cs/geolib/methods_polarity_correction.cc src/cs/geolib/geolib_math.h
+	$(CPP) -c src/cs/geolib/methods_polarity_correction.cc -o $(OBJDIR)/methods_polarity_correction.o $(CXXFLAGS_GEOLIB)
+
+$(OBJDIR)/methods_rotation.o: src/cs/geolib/methods_rotation.cc src/cs/geolib/geolib_math.h   
+	$(CPP) -c src/cs/geolib/methods_rotation.cc -o $(OBJDIR)/methods_rotation.o $(CXXFLAGS_GEOLIB)
+
+$(OBJDIR)/svd_decomposition.o: src/cs/geolib/svd_decomposition.cc    src/cs/geolib/geolib_math.h
+	$(CPP) -c src/cs/geolib/svd_decomposition.cc -o $(OBJDIR)/svd_decomposition.o $(CXXFLAGS_GEOLIB)
+
+$(OBJDIR)/svd_linsolve.o: src/cs/geolib/svd_linsolve.cc src/cs/geolib/geolib_math.h
+	$(CPP) -c src/cs/geolib/svd_linsolve.cc -o $(OBJDIR)/svd_linsolve.o $(CXXFLAGS_GEOLIB)
+
+$(OBJDIR)/csSelectionFieldDouble.o: src/cs/geolib/csSelectionFieldDouble.cc
+	$(CPP) -c src/cs/geolib/csSelectionFieldDouble.cc -o $(OBJDIR)/csSelectionFieldDouble.o $(CXXFLAGS_GEOLIB)
+
+$(OBJDIR)/csSelectionFieldInt.o: src/cs/geolib/csSelectionFieldInt.cc
+	$(CPP) -c src/cs/geolib/csSelectionFieldInt.cc -o $(OBJDIR)/csSelectionFieldInt.o $(CXXFLAGS_GEOLIB)
+
+$(OBJDIR)/csFlexNumber.o: src/cs/geolib/csFlexNumber.cc    src/cs/geolib/csFlexNumber.h
+	$(CPP) -c src/cs/geolib/csFlexNumber.cc -o $(OBJDIR)/csFlexNumber.o $(CXXFLAGS_GEOLIB)
+
+$(OBJDIR)/csFlexHeader.o: src/cs/geolib/csFlexHeader.cc    src/cs/geolib/csFlexHeader.h
+	$(CPP) -c src/cs/geolib/csFlexHeader.cc -o $(OBJDIR)/csFlexHeader.o $(CXXFLAGS_GEOLIB)
+
+$(OBJDIR)/csStandardHeaders.o: src/cs/geolib/csStandardHeaders.cc    src/cs/geolib/csStandardHeaders.h
+	$(CPP) -c src/cs/geolib/csStandardHeaders.cc -o $(OBJDIR)/csStandardHeaders.o $(CXXFLAGS_GEOLIB)
+
+$(OBJDIR)/csHeaderInfo.o: src/cs/geolib/csHeaderInfo.cc    src/cs/geolib/csHeaderInfo.h
+	$(CPP) -c src/cs/geolib/csHeaderInfo.cc -o $(OBJDIR)/csHeaderInfo.o $(CXXFLAGS_GEOLIB)
+
+$(OBJDIR)/csSelection.o: src/cs/geolib/csSelection.cc    src/cs/geolib/csSelection.h   src/cs/geolib/csSelectionField.h src/cs/geolib/csException.h src/cs/geolib/geolib_string_utils.h   src/cs/geolib/csVector.h    src/cs/geolib/csCollection.h src/cs/geolib/geolib_math.h
+	$(CPP) -c src/cs/geolib/csSelection.cc -o $(OBJDIR)/csSelection.o $(CXXFLAGS_GEOLIB)
+
+$(OBJDIR)/csException.o: src/cs/geolib/csException.cc src/cs/geolib/csException.h      
+	$(CPP) -c src/cs/geolib/csException.cc -o $(OBJDIR)/csException.o $(CXXFLAGS_GEOLIB)
+
+$(OBJDIR)/csToken.o: src/cs/geolib/csToken.cc       src/cs/geolib/csToken.h   src/cs/geolib/csMathFunction.h    src/cs/geolib/geolib_math.h
+	$(CPP) -c src/cs/geolib/csToken.cc -o $(OBJDIR)/csToken.o $(CXXFLAGS_GEOLIB)
+
+$(OBJDIR)/csTimer.o: src/cs/geolib/csTimer.cc src/cs/geolib/csTimer.h
+	$(CPP) -c src/cs/geolib/csTimer.cc -o $(OBJDIR)/csTimer.o $(CXXFLAGS_GEOLIB)
+
+$(OBJDIR)/csGeolibUtils.o: src/cs/geolib/csGeolibUtils.cc src/cs/geolib/csGeolibUtils.h
+	$(CPP) -c src/cs/geolib/csGeolibUtils.cc -o $(OBJDIR)/csGeolibUtils.o $(CXXFLAGS_GEOLIB)
+
+$(OBJDIR)/csFFTTools.o: src/cs/geolib/csFFTTools.cc src/cs/geolib/csFFTTools.h
+	$(CPP) -c src/cs/geolib/csFFTTools.cc -o $(OBJDIR)/csFFTTools.o $(CXXFLAGS_GEOLIB)
+
+$(OBJDIR)/csFFTTools_ORIG.o: src/cs/geolib/csFFTTools_ORIG.cc src/cs/geolib/csFFTTools_ORIG.h
+	$(CPP) -c src/cs/geolib/csFFTTools_ORIG.cc -o $(OBJDIR)/csFFTTools_ORIG.o $(CXXFLAGS_GEOLIB)
+
+$(OBJDIR)/csFFT.o: src/cs/geolib/csFFT.cc src/cs/geolib/csFFT.h
+	$(CPP) -c src/cs/geolib/csFFT.cc -o $(OBJDIR)/csFFT.o $(CXXFLAGS_GEOLIB)
+
+$(OBJDIR)/csFFTDesignature.o: src/cs/geolib/csFFTDesignature.cc src/cs/geolib/csFFTDesignature.h
+	$(CPP) -c src/cs/geolib/csFFTDesignature.cc -o $(OBJDIR)/csFFTDesignature.o $(CXXFLAGS_GEOLIB)
+
+$(OBJDIR)/csAbsoluteTime.o: src/cs/geolib/csAbsoluteTime.cc src/cs/geolib/csAbsoluteTime.h
+	$(CPP) -c src/cs/geolib/csAbsoluteTime.cc -o $(OBJDIR)/csAbsoluteTime.o $(CXXFLAGS_GEOLIB)
+
+$(OBJDIR)/csDespike.o: src/cs/geolib/csDespike.cc src/cs/geolib/csDespike.h
+	$(CPP) -c src/cs/geolib/csDespike.cc -o $(OBJDIR)/csDespike.o $(CXXFLAGS_GEOLIB)
+
+$(OBJDIR)/methods_sampleInterpolation.o: src/cs/geolib/methods_sampleInterpolation.cc 
+	$(CPP) -c src/cs/geolib/methods_sampleInterpolation.cc -o $(OBJDIR)/methods_sampleInterpolation.o $(CXXFLAGS_GEOLIB)
+
+$(OBJDIR)/methods_number_conversions.o: src/cs/geolib/methods_number_conversions.cc          src/cs/geolib/methods_number_conversions.h
+	$(CPP) -c src/cs/geolib/methods_number_conversions.cc -o $(OBJDIR)/methods_number_conversions.o $(CXXFLAGS_GEOLIB)
+
+$(OBJDIR)/csSortManager.o: src/cs/geolib/csSortManager.cc src/cs/geolib/csSortManager.h
+	$(CPP) -c src/cs/geolib/csSortManager.cc -o $(OBJDIR)/csSortManager.o $(CXXFLAGS_GEOLIB)
+
+$(OBJDIR)/csIOSelection.o: src/cs/geolib/csIOSelection.cc src/cs/geolib/csIOSelection.h
+	$(CPP) -c src/cs/geolib/csIOSelection.cc -o $(OBJDIR)/csIOSelection.o $(CXXFLAGS_GEOLIB)
+
+$(OBJDIR)/csIReader.o: src/cs/geolib/csIReader.cc   src/cs/geolib/csIReader.h
+	$(CPP) -c src/cs/geolib/csIReader.cc -o $(OBJDIR)/csIReader.o $(CXXFLAGS_GEOLIB)
+
+$(OBJDIR)/csInterpolation.o: src/cs/geolib/csInterpolation.cc src/cs/geolib/csInterpolation.h
+	$(CPP) -c src/cs/geolib/csInterpolation.cc -o $(OBJDIR)/csInterpolation.o $(CXXFLAGS_GEOLIB)	
+
+$(OBJDIR)/csInterpolation2D.o: src/cs/geolib/csInterpolation2D.cc src/cs/geolib/csInterpolation2D.h
+	$(CPP) -c src/cs/geolib/csInterpolation2D.cc -o $(OBJDIR)/csInterpolation2D.o $(CXXFLAGS_GEOLIB)	
+
+$(OBJDIR)/csSplineInterpolation.o: src/cs/geolib/csSplineInterpolation.cc src/cs/geolib/csSplineInterpolation.h
+	$(CPP) -c src/cs/geolib/csSplineInterpolation.cc -o $(OBJDIR)/csSplineInterpolation.o $(CXXFLAGS_GEOLIB)	
+
+$(OBJDIR)/csSplineInterpolation2D.o: src/cs/geolib/csSplineInterpolation2D.cc src/cs/geolib/csSplineInterpolation2D.h
+	$(CPP) -c src/cs/geolib/csSplineInterpolation2D.cc -o $(OBJDIR)/csSplineInterpolation2D.o $(CXXFLAGS_GEOLIB)	
+
+$(OBJDIR)/csPoint2D.o: src/cs/geolib/csPoint2D.cc src/cs/geolib/csPoint2D.h
+	$(CPP) -c src/cs/geolib/csPoint2D.cc -o $(OBJDIR)/csPoint2D.o $(CXXFLAGS_GEOLIB)	
+
+$(OBJDIR)/csPoint3D.o: src/cs/geolib/csPoint3D.cc src/cs/geolib/csPoint3D.h
+	$(CPP) -c src/cs/geolib/csPoint3D.cc -o $(OBJDIR)/csPoint3D.o $(CXXFLAGS_GEOLIB)	
+
+$(OBJDIR)/csLine3D.o: src/cs/geolib/csLine3D.cc src/cs/geolib/csLine3D.h
+	$(CPP) -c src/cs/geolib/csLine3D.cc -o $(OBJDIR)/csLine3D.o $(CXXFLAGS_GEOLIB)	
+
+$(OBJDIR)/csProfile.o: src/cs/geolib/csProfile.cc src/cs/geolib/csProfile.h
+	$(CPP) -c src/cs/geolib/csProfile.cc -o $(OBJDIR)/csProfile.o $(CXXFLAGS_GEOLIB)	
+
+$(OBJDIR)/csPlane3D.o: src/cs/geolib/csPlane3D.cc src/cs/geolib/csPlane3D.h
+	$(CPP) -c src/cs/geolib/csPlane3D.cc -o $(OBJDIR)/csPlane3D.o $(CXXFLAGS_GEOLIB)	
+
+$(OBJDIR)/csReflector2D.o: src/cs/geolib/csReflector2D.cc src/cs/geolib/csReflector2D.h
+	$(CPP) -c src/cs/geolib/csReflector2D.cc -o $(OBJDIR)/csReflector2D.o $(CXXFLAGS_GEOLIB)	
+
+$(OBJDIR)/csTaper.o: src/cs/geolib/csTaper.cc src/cs/geolib/csTaper.h
+	$(CPP) -c src/cs/geolib/csTaper.cc -o $(OBJDIR)/csTaper.o $(CXXFLAGS_GEOLIB)	
+
+$(OBJDIR)/methods_orientation.o: src/cs/geolib/methods_orientation.cc
+	$(CPP) -c src/cs/geolib/methods_orientation.cc -o $(OBJDIR)/methods_orientation.o $(CXXFLAGS_GEOLIB)
+
+$(OBJDIR)/csTable.o: src/cs/geolib/csTable.cc src/cs/geolib/csTable.h
+	$(CPP) -c src/cs/geolib/csTable.cc -o $(OBJDIR)/csTable.o $(CXXFLAGS_GEOLIB)
+
+$(OBJDIR)/csTableAll.o: src/cs/geolib/csTableAll.cc src/cs/geolib/csTableAll.h
+	$(CPP) -c src/cs/geolib/csTableAll.cc -o $(OBJDIR)/csTableAll.o $(CXXFLAGS_GEOLIB)
+
+$(OBJDIR)/csTableNew.o: src/cs/geolib/csTableNew.cc src/cs/geolib/csTableNew.h
+	$(CPP) -c src/cs/geolib/csTableNew.cc -o $(OBJDIR)/csTableNew.o $(CXXFLAGS_GEOLIB)
+
+$(OBJDIR)/methods_ccp.o: src/cs/geolib/methods_ccp.cc
+	$(CPP) -c src/cs/geolib/methods_ccp.cc -o $(OBJDIR)/methods_ccp.o $(CXXFLAGS_GEOLIB)
+
+$(OBJDIR)/methods_pzsum.o: src/cs/geolib/methods_pzsum.cc
+	$(CPP) -c src/cs/geolib/methods_pzsum.cc -o $(OBJDIR)/methods_pzsum.o $(CXXFLAGS_GEOLIB)
+
+$(OBJDIR)/csFileUtils.o: src/cs/geolib/csFileUtils.cc src/cs/geolib/csFileUtils.h
+	$(CPP) -c src/cs/geolib/csFileUtils.cc -o $(OBJDIR)/csFileUtils.o $(CXXFLAGS_GEOLIB)
+
+$(OBJDIR)/csNMOCorrection.o: src/cs/geolib/csNMOCorrection.cc src/cs/geolib/csNMOCorrection.h
+	$(CPP) -c src/cs/geolib/csNMOCorrection.cc -o $(OBJDIR)/csNMOCorrection.o $(CXXFLAGS_GEOLIB)
+
+$(OBJDIR)/cseis_curveFitting.o: src/cs/geolib/cseis_curveFitting.cc src/cs/geolib/cseis_curveFitting.h
+	$(CPP) -c src/cs/geolib/cseis_curveFitting.cc -o $(OBJDIR)/cseis_curveFitting.o $(CXXFLAGS_GEOLIB)
+
+$(OBJDIR)/csRotation.o: src/cs/geolib/csRotation.cc src/cs/geolib/csRotation.h
+	$(CPP) -c src/cs/geolib/csRotation.cc -o $(OBJDIR)/csRotation.o $(CXXFLAGS_GEOLIB)
+
+$(OBJDIR)/csTimeStretch.o: src/cs/geolib/csTimeStretch.cc src/cs/geolib/csTimeStretch.h
+	$(CPP) -c src/cs/geolib/csTimeStretch.cc -o $(OBJDIR)/csTimeStretch.o $(CXXFLAGS_GEOLIB)
+	
+### SYSTEM ###	
+
+$(OBJDIR)/csTableManager.o: src/cs/system/csTableManager.cc src/cs/system/csTableManager.h
+	$(CPP) -c src/cs/system/csTableManager.cc -o $(OBJDIR)/csTableManager.o $(CXXFLAGS_SYSTEM)
+
+$(OBJDIR)/csTableManagerNew.o: src/cs/system/csTableManagerNew.cc src/cs/system/csTableManagerNew.h
+	$(CPP) -c src/cs/system/csTableManagerNew.cc -o $(OBJDIR)/csTableManagerNew.o $(CXXFLAGS_SYSTEM)
+
+$(OBJDIR)/csTrace.o: src/cs/system/csTrace.cc src/cs/system/csTrace.h   src/cs/system/csTraceHeader.h src/cs/system/csTraceHeaderData.h   src/cs/system/csTraceHeaderDef.h src/cs/system/csTraceData.h   src/cs/geolib/geolib_math.h src/cs/geolib/csException.h   src/cs/system/csTracePool.h
+	$(CPP) -c src/cs/system/csTrace.cc -o $(OBJDIR)/csTrace.o $(CXXFLAGS_SYSTEM)
+
+$(OBJDIR)/csTracePool.o: src/cs/system/csTracePool.cc         src/cs/system/csTracePool.h src/cs/system/csTrace.h
+	$(CPP) -c src/cs/system/csTracePool.cc -o $(OBJDIR)/csTracePool.o $(CXXFLAGS_SYSTEM)
+
+$(OBJDIR)/csTraceHeaderDef.o: src/cs/system/csTraceHeaderDef.cc   src/cs/system/cseis_defines.h src/cs/geolib/geolib_defines.h   src/cs/system/csTraceHeaderDef.h      src/cs/system/csTraceHeaderInfo.h src/cs/system/csMemoryPoolManager.h   src/cs/geolib/csVector.h      src/cs/geolib/csException.h src/cs/geolib/csCollection.h   src/cs/geolib/geolib_math.h
+	$(CPP) -c src/cs/system/csTraceHeaderDef.cc -o $(OBJDIR)/csTraceHeaderDef.o $(CXXFLAGS_SYSTEM)
+
+$(OBJDIR)/csTraceHeaderData.o: src/cs/system/csTraceHeaderData.cc      src/cs/system/cseis_defines.h src/cs/geolib/geolib_defines.h   src/cs/system/csTraceHeaderData.h      src/cs/system/csTraceHeaderDef.h src/cs/system/csTraceHeaderInfo.h   src/cs/geolib/csVector.h      src/cs/geolib/csException.h src/cs/geolib/csCollection.h   src/cs/geolib/geolib_math.h
+	$(CPP) -c src/cs/system/csTraceHeaderData.cc -o $(OBJDIR)/csTraceHeaderData.o $(CXXFLAGS_SYSTEM)
+
+$(OBJDIR)/csTraceHeader.o: src/cs/system/csTraceHeader.cc   src/cs/system/csTraceHeader.h src/cs/system/csTraceHeaderData.h      src/cs/system/csTraceHeaderDef.h
+	$(CPP) -c src/cs/system/csTraceHeader.cc -o $(OBJDIR)/csTraceHeader.o $(CXXFLAGS_SYSTEM)
+
+$(OBJDIR)/csModule.o: src/cs/system/csModule.cc src/cs/system/csModule.h
+	$(CPP) -c src/cs/system/csModule.cc -o $(OBJDIR)/csModule.o $(CXXFLAGS_SYSTEM)
+
+$(OBJDIR)/csTraceGather.o: src/cs/system/csTraceGather.cc   src/cs/system/csTraceGather.h src/cs/system/csTrace.h   src/cs/geolib/csVector.h            src/cs/geolib/csException.h src/cs/geolib/csCollection.h   src/cs/geolib/geolib_math.h src/cs/system/csMemoryPoolManager.h
+	$(CPP) -c src/cs/system/csTraceGather.cc -o $(OBJDIR)/csTraceGather.o $(CXXFLAGS_SYSTEM)
+
+$(OBJDIR)/csExecPhaseDef.o: src/cs/system/csExecPhaseDef.cc   src/cs/system/csExecPhaseDef.h  src/cs/geolib/csException.h   src/cs/system/csTraceGather.h src/cs/system/csTraceHeaderDef.h   src/cs/system/csSuperHeader.h src/cs/system/cseis_defines.h   src/cs/geolib/geolib_defines.h
+	$(CPP) -c src/cs/system/csExecPhaseDef.cc -o $(OBJDIR)/csExecPhaseDef.o $(CXXFLAGS_SYSTEM)
+
+$(OBJDIR)/csUserConstant.o: src/cs/system/csUserConstant.cc   src/cs/system/csUserConstant.h   
+	$(CPP) -c src/cs/system/csUserConstant.cc -o $(OBJDIR)/csUserConstant.o $(CXXFLAGS_SYSTEM)
+
+$(OBJDIR)/csUserParam.o: src/cs/system/csUserParam.cc         src/cs/system/csUserParam.h src/cs/geolib/csVector.h   src/cs/geolib/csException.h src/cs/geolib/csCollection.h   src/cs/geolib/geolib_math.h src/cs/geolib/geolib_string_utils.h
+	$(CPP) -c src/cs/system/csUserParam.cc -o $(OBJDIR)/csUserParam.o $(CXXFLAGS_SYSTEM)
+
+$(OBJDIR)/csParamDef.o: src/cs/system/csParamDef.cc src/cs/system/csParamDef.h   src/cs/geolib/csVector.h      src/cs/geolib/csException.h src/cs/geolib/csCollection.h   src/cs/geolib/geolib_math.h src/cs/geolib/geolib_string_utils.h   src/cs/system/cseis_defines.h src/cs/geolib/geolib_defines.h
+	$(CPP) -c src/cs/system/csParamDef.cc -o $(OBJDIR)/csParamDef.o $(CXXFLAGS_SYSTEM)
+
+$(OBJDIR)/geolib_methods.o: src/cs/system/cseis_methods.cc         src/cs/system/cseis_defines.h src/cs/geolib/geolib_defines.h   src/cs/geolib/geolib_string_utils.h src/cs/system/csUserConstant.h   src/cs/geolib/csCompareVector.h      src/cs/geolib/csVector.h src/cs/geolib/csException.h   src/cs/geolib/csCollection.h src/cs/geolib/geolib_math.h   src/cs/geolib/csKey.h src/cs/geolib/csVector.h   src/cs/geolib/csException.h
+	$(CPP) -c src/cs/system/cseis_methods.cc -o $(OBJDIR)/geolib_methods.o $(CXXFLAGS_SYSTEM)
+
+$(OBJDIR)/csSuperHeader.o: src/cs/system/csSuperHeader.cc   src/cs/system/csSuperHeader.h      src/cs/geolib/csVector.h      src/cs/geolib/csException.h src/cs/geolib/csCollection.h   src/cs/geolib/geolib_math.h src/cs/geolib/csException.h
+	$(CPP) -c src/cs/system/csSuperHeader.cc -o $(OBJDIR)/csSuperHeader.o $(CXXFLAGS_SYSTEM)
+
+$(OBJDIR)/csParamManager.o: src/cs/system/csParamManager.cc   src/cs/system/csParamManager.h      src/cs/system/csUserParam.h src/cs/geolib/csVector.h      src/cs/geolib/csException.h src/cs/geolib/csCollection.h   src/cs/geolib/geolib_math.h src/cs/system/csLogWriter.h
+	$(CPP) -c src/cs/system/csParamManager.cc -o $(OBJDIR)/csParamManager.o $(CXXFLAGS_SYSTEM)
+
+$(OBJDIR)/csTraceHeaderInfoPool.o: src/cs/system/csTraceHeaderInfoPool.cc   src/cs/system/csTraceHeaderInfoPool.h      src/cs/system/csTraceHeaderInfo.h src/cs/geolib/csVector.h      src/cs/geolib/csException.h src/cs/geolib/csCollection.h   src/cs/geolib/geolib_math.h
+	$(CPP) -c src/cs/system/csTraceHeaderInfoPool.cc -o $(OBJDIR)/csTraceHeaderInfoPool.o $(CXXFLAGS_SYSTEM)
+
+$(OBJDIR)/csLogWriter.o: src/cs/system/csLogWriter.cc src/cs/system/csLogWriter.h      src/cs/geolib/csException.h      
+	$(CPP) -c src/cs/system/csLogWriter.cc -o $(OBJDIR)/csLogWriter.o $(CXXFLAGS_SYSTEM)
+
+$(OBJDIR)/csStackUtil.o: src/cs/system/csStackUtil.cc src/cs/system/csStackUtil.h      
+	$(CPP) -c src/cs/system/csStackUtil.cc -o $(OBJDIR)/csStackUtil.o $(CXXFLAGS_SYSTEM)
+
+$(OBJDIR)/csRandomDataReader.o: src/cs/system/csRandomDataReader.cc src/cs/system/csRandomDataReader.h      
+	$(CPP) -c src/cs/system/csRandomDataReader.cc -o $(OBJDIR)/csRandomDataReader.o $(CXXFLAGS_SYSTEM) -I"src/cs/segy"
+
+$(OBJDIR)/csInitExecEnv.o: src/cs/system/csInitExecEnv.cc   src/cs/system/csInitExecEnv.h
+	$(CPP) -c src/cs/system/csInitExecEnv.cc -o $(OBJDIR)/csInitExecEnv.o $(CXXFLAGS_SYSTEM)
+
+$(OBJDIR)/csMemoryPoolManager.o: src/cs/system/csMemoryPoolManager.cc   src/cs/system/csMemoryPoolManager.h      src/cs/system/csTrace.h src/cs/system/csTracePool.h   src/cs/system/csTraceHeaderInfo.h   src/cs/system/csTraceHeaderInfoPool.h   src/cs/system/csTraceHeaderData.h
+	$(CPP) -c src/cs/system/csMemoryPoolManager.cc -o $(OBJDIR)/csMemoryPoolManager.o $(CXXFLAGS_SYSTEM)
+
+$(OBJDIR)/csTraceData.o: src/cs/system/csTraceData.cc src/cs/system/csTraceData.h      src/cs/geolib/geolib_math.h src/cs/geolib/csException.h      
+	$(CPP) -c src/cs/system/csTraceData.cc -o $(OBJDIR)/csTraceData.o $(CXXFLAGS_SYSTEM)
+
+$(OBJDIR)/csSelectionManager.o: src/cs/system/csSelectionManager.cc   src/cs/system/csSelectionManager.h   src/cs/geolib/csException.h src/cs/geolib/csVector.h      src/cs/geolib/csCollection.h src/cs/geolib/geolib_math.h   src/cs/geolib/csSelection.h src/cs/geolib/csException.h   src/cs/system/csTraceHeaderDef.h src/cs/system/csTraceHeader.h   src/cs/system/csTraceHeaderData.h src/cs/system/csTraceHeaderDef.h
+	$(CPP) -c src/cs/system/csSelectionManager.cc -o $(OBJDIR)/csSelectionManager.o $(CXXFLAGS_SYSTEM)
+
+$(OBJDIR)/csSeismicWriter.o: src/cs/system/csSeismicWriter.cc   src/cs/system/csSeismicWriter.h
+	$(CPP) -c src/cs/system/csSeismicWriter.cc -o $(OBJDIR)/csSeismicWriter.o $(CXXFLAGS_SYSTEM)
+
+$(OBJDIR)/csMethodRetriever.o: src/cs/system/csMethodRetriever.cc   src/cs/system/csMethodRetriever.h src/cs/system/cseis_defines.h   src/cs/geolib/geolib_defines.h $(LIBDIR)/include/cseis_modules.h
+	$(CPP) -c src/cs/system/csMethodRetriever.cc -o $(OBJDIR)/csMethodRetriever.o -I${LIBDIR}/include $(CXXFLAGS_SYSTEM)
+
+$(LIBDIR)/include/cseis_modules.h: src/include/cseis_modules.txt
+	${CSEISDIR_SRCROOT}/src/make/linux/prepare_cseis_build.sh
+
+### IO ###	
+
+$(OBJDIR)/csSeismicWriter_ver.o: src/cs/io/csSeismicWriter_ver.cc   src/cs/io/csSeismicWriter_ver.h
+	$(CPP) -c src/cs/io/csSeismicWriter_ver.cc -o $(OBJDIR)/csSeismicWriter_ver.o $(CXXFLAGS_SYSTEM)
+
+$(OBJDIR)/csSeismicIOConfig.o: src/cs/io/csSeismicIOConfig.cc   src/cs/io/csSeismicIOConfig.h
+	$(CPP) -c src/cs/io/csSeismicIOConfig.cc -o $(OBJDIR)/csSeismicIOConfig.o $(CXXFLAGS_SYSTEM)
+
+$(OBJDIR)/csSeismicReader.o: src/cs/system/csSeismicReader.cc   src/cs/system/csSeismicReader.h
+	$(CPP) -c src/cs/system/csSeismicReader.cc -o $(OBJDIR)/csSeismicReader.o $(CXXFLAGS_SYSTEM)
+
+$(OBJDIR)/csSeismicReader_ver.o: src/cs/io/csSeismicReader_ver.cc   src/cs/io/csSeismicReader_ver.h
+	$(CPP) -c src/cs/io/csSeismicReader_ver.cc -o $(OBJDIR)/csSeismicReader_ver.o $(CXXFLAGS_SYSTEM)
+
+$(OBJDIR)/csSeismicReader_ver00.o: src/cs/io/csSeismicReader_ver00.cc   src/cs/io/csSeismicReader_ver00.h
+	$(CPP) -c src/cs/io/csSeismicReader_ver00.cc -o $(OBJDIR)/csSeismicReader_ver00.o $(CXXFLAGS_SYSTEM)
+
+$(OBJDIR)/csSeismicReader_ver01.o: src/cs/io/csSeismicReader_ver01.cc   src/cs/io/csSeismicReader_ver01.h
+	$(CPP) -c src/cs/io/csSeismicReader_ver01.cc -o $(OBJDIR)/csSeismicReader_ver01.o $(CXXFLAGS_SYSTEM)
+
+$(OBJDIR)/csSeismicReader_ver02.o: src/cs/io/csSeismicReader_ver02.cc   src/cs/io/csSeismicReader_ver02.h
+	$(CPP) -c src/cs/io/csSeismicReader_ver02.cc -o $(OBJDIR)/csSeismicReader_ver02.o $(CXXFLAGS_SYSTEM)
+
+$(OBJDIR)/csSeismicReader_ver03.o: src/cs/io/csSeismicReader_ver03.cc   src/cs/io/csSeismicReader_ver03.h
+	$(CPP) -c src/cs/io/csSeismicReader_ver03.cc -o $(OBJDIR)/csSeismicReader_ver03.o $(CXXFLAGS_SYSTEM)
+
+$(OBJDIR)/csSeismicReader_ver04.o: src/cs/io/csSeismicReader_ver04.cc   src/cs/io/csSeismicReader_ver04.h
+	$(CPP) -c src/cs/io/csSeismicReader_ver04.cc -o $(OBJDIR)/csSeismicReader_ver04.o $(CXXFLAGS_SYSTEM)
+
+$(OBJDIR)/csASCIIFileReader.o: src/cs/io/csASCIIFileReader.cc   src/cs/io/csASCIIFileReader.h
+	$(CPP) -c src/cs/io/csASCIIFileReader.cc -o $(OBJDIR)/csASCIIFileReader.o $(CXXFLAGS_SYSTEM)
+
+$(OBJDIR)/csP190Reader.o: src/cs/io/csP190Reader.cc   src/cs/io/csP190Reader.h
+	$(CPP) -c src/cs/io/csP190Reader.cc -o $(OBJDIR)/csP190Reader.o $(CXXFLAGS_SYSTEM)
+
+$(OBJDIR)/csRSFHeader.o: src/cs/io/csRSFHeader.cc   src/cs/io/csRSFHeader.h
+	$(CPP) -c src/cs/io/csRSFHeader.cc -o $(OBJDIR)/csRSFHeader.o $(CXXFLAGS_SYSTEM)
+
+$(OBJDIR)/csRSFReader.o: src/cs/io/csRSFReader.cc   src/cs/io/csRSFReader.h
+	$(CPP) -c src/cs/io/csRSFReader.cc -o $(OBJDIR)/csRSFReader.o $(CXXFLAGS_SYSTEM)
+
+$(OBJDIR)/csRSFWriter.o: src/cs/io/csRSFWriter.cc   src/cs/io/csRSFWriter.h
+	$(CPP) -c src/cs/io/csRSFWriter.cc -o $(OBJDIR)/csRSFWriter.o $(CXXFLAGS_SYSTEM)
+

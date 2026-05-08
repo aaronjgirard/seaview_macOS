@@ -1,0 +1,12 @@
+
+# CSEIS make file
+
+default: $(LIBDIR)/include/cseis_modules.h
+
+clean:
+	$(RM) -f $(LIBDIR)/include/cseis_modules.h
+
+bleach: clean
+
+$(LIBDIR)/include/cseis_modules.h: src/include/cseis_modules.txt
+	${CSEISDIR_SRCROOT}/src/make/macos/prepare_cseis_build.sh

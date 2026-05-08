@@ -77,7 +77,6 @@
   PICKING             1.0
   POSCALC             1.0
   PZ_SUM              1.0
-  RAY2D               1.0
   READ_ASCII          1.0
   REFLPATH_3D         1.0
   REPEAT              1.0

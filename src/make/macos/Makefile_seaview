@@ -1,0 +1,272 @@
+JNIDIR   = $(SRCDIR)/cs/jni
+
+OBJ_JNI_SEGY = $(OBJDIR)/csSegyHdrMap.o \
+				$(OBJDIR)/csSegyTraceHeader.o \
+				$(OBJDIR)/csSegyBinHeader.o \
+				$(OBJDIR)/csSegyReader.o \
+				$(OBJDIR)/geolib_endian.o \
+				$(OBJDIR)/csException.o \
+				$(OBJDIR)/methods_number_conversions.o \
+				$(OBJDIR)/csFlexNumber.o \
+				$(OBJDIR)/csFlexHeader.o \
+				$(OBJDIR)/csFileUtils.o \
+				$(OBJDIR)/csSeismicReader_ver.o \
+				$(OBJDIR)/csSeismicReader_ver00.o \
+				$(OBJDIR)/csSeismicReader_ver01.o \
+				$(OBJDIR)/csSeismicReader_ver02.o \
+				$(OBJDIR)/csSeismicReader_ver03.o \
+				$(OBJDIR)/csSeismicReader_ver04.o \
+				$(OBJDIR)/csGeneralSeismicReader.o \
+				$(OBJDIR)/csSeismicIOConfig.o \
+				$(OBJDIR)/geolib_string_utils.o \
+				$(OBJDIR)/geolib_math.o \
+				$(OBJDIR)/methods_sampleInterpolation.o \
+				$(OBJDIR)/csMethodRetriever.o \
+				$(OBJDIR)/csParamDef.o \
+				$(OBJDIR)/csIReader.o \
+				$(OBJDIR)/csIOSelection.o \
+				$(OBJDIR)/csGeolibUtils.o \
+				$(OBJDIR)/csHelp.o \
+                                $(OBJDIR)/fft.o \
+				$(OBJDIR)/csSelection.o \
+				$(OBJDIR)/csStandardHeaders.o \
+				$(OBJDIR)/csSelectionFieldDouble.o \
+				$(OBJDIR)/csSelectionFieldInt.o \
+				$(OBJDIR)/csSortManager.o
+
+SEGDDIR = $(SRCDIR)/cs/segd
+
+OBJ_JNI_SEGD = $(OBJDIR)/csExternalHeader.o \
+	  $(OBJDIR)/csGCS90Header.o \
+	  $(OBJDIR)/csNavHeader.o \
+	  $(OBJDIR)/csSegdHeader.o \
+	  $(OBJDIR)/csSegdHeader_SEAL.o \
+	  $(OBJDIR)/csSegdFunctions.o \
+	  $(OBJDIR)/csSegdReader.o \
+	  $(OBJDIR)/csSegdHeader_GEORES.o \
+	  $(OBJDIR)/csSegdHeader_DIGISTREAMER.o \
+	  $(OBJDIR)/csNavInterface.o \
+	  $(OBJDIR)/csSegdBuffer.o \
+	  $(OBJDIR)/csStandardSegdHeader.o \
+	  $(OBJDIR)/csSegdHdrValues.o
+
+OBJ_JNI_RSF = $(OBJDIR)/csRSFHeader.o \
+	  $(OBJDIR)/csRSFReader.o
+
+OBJ_JNI = $(OBJDIR)/csNativeSegyReader.o \
+			$(OBJDIR)/csNativeSeismicReader.o \
+			$(OBJDIR)/csNativeSegdReader.o \
+			$(OBJDIR)/csNativeModuleHelp.o \
+			$(OBJDIR)/csNativeFFTTransform.o \
+			$(OBJDIR)/csNativeFilter.o \
+			$(OBJDIR)/csFilterTool.o \
+			$(OBJDIR)/csFFTTools.o \
+			$(OBJDIR)/csFFT.o \
+			$(OBJDIR)/csNativeRSFReader.o
+
+CXXFLAGS_JNI = -fPIC $(COMMON_FLAGS) -I"$(SRCDIR)/cs/geolib" -I"$(SRCDIR)/cs/segy" -I"$(SRCDIR)/cs/segd" -I"$(SRCDIR)/cs/io" -I"$(SRCDIR)/cs/system"
+INC_JNI      = -I$(SRCDIR)/cs/jni -I$(SRCDIR)/cs/jni/linux
+
+LIB_JNI          = $(LIBDIR)/libcsJNIlib.dylib
+
+default: $(LIB_JNI) ${LIBDIR}/CSeisLib.jar ${LIBDIR}/SeaView.jar ${BINDIR}/seaview.sh ${BINDIR}/plotimage.sh
+
+clean:
+	${RM} $(OBJ_JNI) $(OBJ_JNI_SEGY) $(OBJ_JNI_SEGD) $(OBJ_JNI_RSF)
+
+bleach: clean
+	${RM} $(LIB_JNI) ${LIBDIR}/CSeisLib.jar ${LIBDIR}/SeaView.jar
+
+$(LIB_JNI): $(OBJ_JNI_SEGY) $(OBJ_JNI) $(OBJ_JNI_RSF)
+	$(CPP) $(GLOBAL_FLAGS) -fPIC -dynamiclib -Wl,-$(SONAME),@rpath/libcsJNIlib.dylib -o $(LIB_JNI) $(OBJ_JNI_SEGY) $(OBJ_JNI_SEGD) $(OBJ_JNI_RSF) $(OBJ_JNI) $(LIB_FLAGS)
+
+$(OBJDIR)/csNativeSegyReader.o: ${JNIDIR}/csNativeSegyReader.cc
+	$(CPP) -c ${JNIDIR}/csNativeSegyReader.cc -o $(OBJDIR)/csNativeSegyReader.o $(CXXFLAGS_JNI) $(INC_JNI)
+
+$(OBJDIR)/csNativeSegdReader.o: ${JNIDIR}/csNativeSegdReader.cc
+	$(CPP) -c ${JNIDIR}/csNativeSegdReader.cc -o $(OBJDIR)/csNativeSegdReader.o $(CXXFLAGS_JNI) $(INC_JNI)
+
+$(OBJDIR)/csNativeSeismicReader.o: ${JNIDIR}/csNativeSeismicReader.cc
+	$(CPP) -c ${JNIDIR}/csNativeSeismicReader.cc -o $(OBJDIR)/csNativeSeismicReader.o $(CXXFLAGS_JNI) $(INC_JNI)
+
+$(OBJDIR)/csNativeModuleHelp.o: ${JNIDIR}/csNativeModuleHelp.cc
+	$(CPP) -c ${JNIDIR}/csNativeModuleHelp.cc -o $(OBJDIR)/csNativeModuleHelp.o $(CXXFLAGS_JNI) $(INC_JNI)
+
+$(OBJDIR)/csNativeFFTTransform.o: ${JNIDIR}/csNativeFFTTransform.cc
+	$(CPP) -c ${JNIDIR}/csNativeFFTTransform.cc -o $(OBJDIR)/csNativeFFTTransform.o $(CXXFLAGS_JNI) $(INC_JNI)
+
+$(OBJDIR)/csNativeFilter.o: ${JNIDIR}/csNativeFilter.cc
+	$(CPP) -c ${JNIDIR}/csNativeFilter.cc -o $(OBJDIR)/csNativeFilter.o $(CXXFLAGS_JNI) $(INC_JNI)
+
+$(OBJDIR)/csFilterTool.o: ${JNIDIR}/csFilterTool.cc
+	$(CPP) -c ${JNIDIR}/csFilterTool.cc -o $(OBJDIR)/csFilterTool.o $(CXXFLAGS_JNI) $(INC_JNI) $(CXXFLAGS_GEOLIB)
+
+$(OBJDIR)/csFFT.o: $(SRCDIR)/cs/geolib/csFFT.cc        
+	$(CPP) -c -fPIC $(SRCDIR)/cs/geolib/csFFT.cc -o $(OBJDIR)/csFFT.o $(CXXFLAGS_GEOLIB)
+
+$(OBJDIR)/csFFTTools.o: $(SRCDIR)/cs/geolib/csFFTTools.cc        
+	$(CPP) -c -fPIC $(SRCDIR)/cs/geolib/csFFTTools.cc -o $(OBJDIR)/csFFTTools.o $(CXXFLAGS_GEOLIB)
+
+$(OBJDIR)/fft.o: $(SRCDIR)/cs/geolib/fft.cc        
+	$(CPP) -c -fPIC $(SRCDIR)/cs/geolib/fft.cc -o $(OBJDIR)/fft.o $(CXXFLAGS_GEOLIB)
+
+$(OBJDIR)/csNativeRSFReader.o: ${JNIDIR}/csNativeRSFReader.cc
+	$(CPP) -c ${JNIDIR}/csNativeRSFReader.cc -o $(OBJDIR)/csNativeRSFReader.o $(CXXFLAGS_JNI) $(INC_JNI)
+
+$(OBJDIR)/csHelp.o: $(SRCDIR)/cs/system/csHelp.cc        
+	$(CPP) -c $(SRCDIR)/cs/system/csHelp.cc -o $(OBJDIR)/csHelp.o $(CXXFLAGS_JNI) $(INC_JNI)
+
+$(OBJDIR)/csParamDef.o: $(SRCDIR)/cs/system/csParamDef.cc
+	$(CPP) -c $(SRCDIR)/cs/system/csParamDef.cc -o $(OBJDIR)/csParamDef.o $(CXXFLAGS_JNI) $(INC_JNI)
+	
+$(OBJDIR)/csMethodRetriever.o: $(SRCDIR)/cs/system/csMethodRetriever.cc
+	$(CPP) -c $(SRCDIR)/cs/system/csMethodRetriever.cc -o $(OBJDIR)/csMethodRetriever.o $(CXXFLAGS_JNI) $(INC_JNI)
+	
+$(OBJDIR)/geolib_endian.o: $(SRCDIR)/cs/geolib/geolib_endian.cc    $(SRCDIR)/cs/geolib/geolib_endian.h
+	$(CPP) -c $(SRCDIR)/cs/geolib/geolib_endian.cc -o $(OBJDIR)/geolib_endian.o $(CXXFLAGS_JNI)
+
+$(OBJDIR)/csGeolibUtils.o: $(SRCDIR)/cs/geolib/csGeolibUtils.cc $(SRCDIR)/cs/geolib/csGeolibUtils.h
+	$(CPP) -c $(SRCDIR)/cs/geolib/csGeolibUtils.cc -o $(OBJDIR)/csGeolibUtils.o $(CXXFLAGS_JNI)
+
+$(OBJDIR)/csIOSelection.o: $(SRCDIR)/cs/geolib/csIOSelection.cc $(SRCDIR)/cs/geolib/csIOSelection.h
+	$(CPP) -c $(SRCDIR)/cs/geolib/csIOSelection.cc -o $(OBJDIR)/csIOSelection.o $(CXXFLAGS_JNI)
+
+$(OBJDIR)/csSelection.o: $(SRCDIR)/cs/geolib/csSelection.cc $(SRCDIR)/cs/geolib/csSelection.h
+	$(CPP) -c $(SRCDIR)/cs/geolib/csSelection.cc -o $(OBJDIR)/csSelection.o $(CXXFLAGS_JNI)
+
+$(OBJDIR)/csStandardHeaders.o: $(SRCDIR)/cs/geolib/csStandardHeaders.cc $(SRCDIR)/cs/geolib/csStandardHeaders.h
+	$(CPP) -c $(SRCDIR)/cs/geolib/csStandardHeaders.cc -o $(OBJDIR)/csStandardHeaders.o $(CXXFLAGS_JNI)
+
+$(OBJDIR)/csSelectionFieldInt.o: $(SRCDIR)/cs/geolib/csSelectionFieldInt.cc $(SRCDIR)/cs/geolib/csSelectionFieldInt.h
+	$(CPP) -c $(SRCDIR)/cs/geolib/csSelectionFieldInt.cc -o $(OBJDIR)/csSelectionFieldInt.o $(CXXFLAGS_JNI)
+
+$(OBJDIR)/csSelectionFieldDouble.o: $(SRCDIR)/cs/geolib/csSelectionFieldDouble.cc $(SRCDIR)/cs/geolib/csSelectionFieldDouble.h
+	$(CPP) -c $(SRCDIR)/cs/geolib/csSelectionFieldDouble.cc -o $(OBJDIR)/csSelectionFieldDouble.o $(CXXFLAGS_JNI)
+
+$(OBJDIR)/csSortManager.o: $(SRCDIR)/cs/geolib/csSortManager.cc $(SRCDIR)/cs/geolib/csSortManager.h
+	$(CPP) -c $(SRCDIR)/cs/geolib/csSortManager.cc -o $(OBJDIR)/csSortManager.o $(CXXFLAGS_JNI)
+
+$(OBJDIR)/csIReader.o: $(SRCDIR)/cs/geolib/csIReader.cc $(SRCDIR)/cs/geolib/csIReader.h
+	$(CPP) -c $(SRCDIR)/cs/geolib/csIReader.cc -o $(OBJDIR)/csIReader.o $(CXXFLAGS_JNI)
+
+$(OBJDIR)/geolib_string_utils.o: $(SRCDIR)/cs/geolib/geolib_string_utils.cc    $(SRCDIR)/cs/geolib/geolib_string_utils.h
+	$(CPP) -c $(SRCDIR)/cs/geolib/geolib_string_utils.cc -o $(OBJDIR)/geolib_string_utils.o $(CXXFLAGS_JNI)
+
+$(OBJDIR)/geolib_math.o: $(SRCDIR)/cs/geolib/geolib_math.cc    $(SRCDIR)/cs/geolib/geolib_math.h
+	$(CPP) -c $(SRCDIR)/cs/geolib/geolib_math.cc -o $(OBJDIR)/geolib_math.o $(CXXFLAGS_JNI)
+
+$(OBJDIR)/methods_sampleInterpolation.o: $(SRCDIR)/cs/geolib/methods_sampleInterpolation.cc
+	$(CPP) -c $(SRCDIR)/cs/geolib/methods_sampleInterpolation.cc -o $(OBJDIR)/methods_sampleInterpolation.o $(CXXFLAGS_JNI)
+
+$(OBJDIR)/csFlexNumber.o: $(SRCDIR)/cs/geolib/csFlexNumber.cc    $(SRCDIR)/cs/geolib/csFlexNumber.h
+	$(CPP) -c $(SRCDIR)/cs/geolib/csFlexNumber.cc -o $(OBJDIR)/csFlexNumber.o $(CXXFLAGS_JNI)
+
+$(OBJDIR)/csFlexHeader.o: $(SRCDIR)/cs/geolib/csFlexHeader.cc    $(SRCDIR)/cs/geolib/csFlexHeader.h
+	$(CPP) -c $(SRCDIR)/cs/geolib/csFlexHeader.cc -o $(OBJDIR)/csFlexHeader.o $(CXXFLAGS_JNI)
+
+$(OBJDIR)/csException.o: $(SRCDIR)/cs/geolib/csException.cc $(SRCDIR)/cs/geolib/csException.h      
+	$(CPP) -c $(SRCDIR)/cs/geolib/csException.cc -o $(OBJDIR)/csException.o $(CXXFLAGS_JNI)
+
+$(OBJDIR)/methods_number_conversions.o: $(SRCDIR)/cs/geolib/methods_number_conversions.cc          $(SRCDIR)/cs/geolib/methods_number_conversions.h
+	$(CPP) -c $(SRCDIR)/cs/geolib/methods_number_conversions.cc -o $(OBJDIR)/methods_number_conversions.o $(CXXFLAGS_JNI)
+
+$(OBJDIR)/csFileUtils.o: $(SRCDIR)/cs/geolib/csFileUtils.cc $(SRCDIR)/cs/geolib/csFileUtils.h
+	$(CPP) -c $(SRCDIR)/cs/geolib/csFileUtils.cc -o $(OBJDIR)/csFileUtils.o $(CXXFLAGS_JNI)
+
+$(OBJDIR)/csSegyHdrMap.o: $(SRCDIR)/cs/segy/csSegyHdrMap.cc $(SRCDIR)/cs/segy/csSegyHdrMap.h
+	$(CPP) -c $(SRCDIR)/cs/segy/csSegyHdrMap.cc -o $(OBJDIR)/csSegyHdrMap.o $(CXXFLAGS_JNI)
+
+$(OBJDIR)/csSegyTraceHeader.o: $(SRCDIR)/cs/segy/csSegyTraceHeader.cc $(SRCDIR)/cs/segy/csSegyTraceHeader.h
+	$(CPP) -c $(SRCDIR)/cs/segy/csSegyTraceHeader.cc -o $(OBJDIR)/csSegyTraceHeader.o $(CXXFLAGS_JNI)
+
+$(OBJDIR)/csSegyReader.o: $(SRCDIR)/cs/segy/csSegyReader.cc $(SRCDIR)/cs/segy/csSegyReader.h $(SRCDIR)/cs/segy/csSegyHdrMap.h
+	$(CPP) -c $(SRCDIR)/cs/segy/csSegyReader.cc -o $(OBJDIR)/csSegyReader.o $(CXXFLAGS_JNI)
+
+$(OBJDIR)/csSegyBinHeader.o: $(SRCDIR)/cs/segy/csSegyBinHeader.cc $(SRCDIR)/cs/segy/csSegyBinHeader.h
+	$(CPP) -c $(SRCDIR)/cs/segy/csSegyBinHeader.cc -o $(OBJDIR)/csSegyBinHeader.o $(CXXFLAGS_JNI)
+
+$(OBJDIR)/csSeismicReader_ver.o: $(SRCDIR)/cs/io/csSeismicReader_ver.cc $(SRCDIR)/cs/io/csSeismicReader_ver.h
+	$(CPP) -c $(SRCDIR)/cs/io/csSeismicReader_ver.cc -o $(OBJDIR)/csSeismicReader_ver.o $(CXXFLAGS_JNI)
+
+$(OBJDIR)/csSeismicReader_ver00.o: $(SRCDIR)/cs/io/csSeismicReader_ver00.cc $(SRCDIR)/cs/io/csSeismicReader_ver00.h
+	$(CPP) -c $(SRCDIR)/cs/io/csSeismicReader_ver00.cc -o $(OBJDIR)/csSeismicReader_ver00.o $(CXXFLAGS_JNI)
+
+$(OBJDIR)/csSeismicReader_ver01.o: $(SRCDIR)/cs/io/csSeismicReader_ver01.cc $(SRCDIR)/cs/io/csSeismicReader_ver01.h
+	$(CPP) -c $(SRCDIR)/cs/io/csSeismicReader_ver01.cc -o $(OBJDIR)/csSeismicReader_ver01.o $(CXXFLAGS_JNI)
+
+$(OBJDIR)/csSeismicReader_ver02.o: $(SRCDIR)/cs/io/csSeismicReader_ver02.cc $(SRCDIR)/cs/io/csSeismicReader_ver02.h
+	$(CPP) -c $(SRCDIR)/cs/io/csSeismicReader_ver02.cc -o $(OBJDIR)/csSeismicReader_ver02.o $(CXXFLAGS_JNI)
+
+$(OBJDIR)/csSeismicReader_ver03.o: $(SRCDIR)/cs/io/csSeismicReader_ver03.cc $(SRCDIR)/cs/io/csSeismicReader_ver03.h
+	$(CPP) -c $(SRCDIR)/cs/io/csSeismicReader_ver03.cc -o $(OBJDIR)/csSeismicReader_ver03.o $(CXXFLAGS_JNI)
+
+$(OBJDIR)/csSeismicReader_ver04.o: $(SRCDIR)/cs/io/csSeismicReader_ver04.cc $(SRCDIR)/cs/io/csSeismicReader_ver04.h
+	$(CPP) -c $(SRCDIR)/cs/io/csSeismicReader_ver04.cc -o $(OBJDIR)/csSeismicReader_ver04.o $(CXXFLAGS_JNI)
+
+$(OBJDIR)/csGeneralSeismicReader.o: $(SRCDIR)/cs/io/csGeneralSeismicReader.cc $(SRCDIR)/cs/io/csGeneralSeismicReader.h
+	$(CPP) -c $(SRCDIR)/cs/io/csGeneralSeismicReader.cc -o $(OBJDIR)/csGeneralSeismicReader.o $(CXXFLAGS_JNI)
+
+$(OBJDIR)/csSeismicIOConfig.o: $(SRCDIR)/cs/io/csSeismicIOConfig.cc $(SRCDIR)/cs/io/csSeismicIOConfig.h
+	$(CPP) -c $(SRCDIR)/cs/io/csSeismicIOConfig.cc -o $(OBJDIR)/csSeismicIOConfig.o $(CXXFLAGS_JNI)
+
+# ---------- SEGD ----------
+
+$(OBJDIR)/csSegdHeader_SEAL.o:	$(SEGDDIR)/csSegdHeader_SEAL.cc $(SEGDDIR)/csSegdHeader_SEAL.h
+			$(CPP) $(SEGDDIR)/csSegdHeader_SEAL.cc -c -o $(OBJDIR)/csSegdHeader_SEAL.o $(CXXFLAGS_JNI)
+
+$(OBJDIR)/csSegdHeader.o:	$(SEGDDIR)/csSegdHeader.cc $(SEGDDIR)/csSegdHeader.h
+			$(CPP) $(SEGDDIR)/csSegdHeader.cc -c -o $(OBJDIR)/csSegdHeader.o $(CXXFLAGS_JNI)
+
+$(OBJDIR)/csSegdBuffer.o:	$(SEGDDIR)/csSegdBuffer.cc $(SEGDDIR)/csSegdBuffer.h
+			$(CPP) $(SEGDDIR)/csSegdBuffer.cc -c -o $(OBJDIR)/csSegdBuffer.o $(CXXFLAGS_JNI)
+
+$(OBJDIR)/csExternalHeader.o:	$(SEGDDIR)/csExternalHeader.cc $(SEGDDIR)/csExternalHeader.h
+			$(CPP) $(SEGDDIR)/csExternalHeader.cc -c -o $(OBJDIR)/csExternalHeader.o $(CXXFLAGS_JNI)
+
+$(OBJDIR)/csSegdReader.o:	$(SEGDDIR)/csSegdReader.cc $(SEGDDIR)/csSegdReader.h
+			$(CPP) $(SEGDDIR)/csSegdReader.cc -c -o $(OBJDIR)/csSegdReader.o $(CXXFLAGS_JNI)
+
+$(OBJDIR)/csSegdFunctions.o:	$(SEGDDIR)/csSegdFunctions.cc $(SEGDDIR)/csSegdFunctions.h
+			$(CPP) $(SEGDDIR)/csSegdFunctions.cc -c -o $(OBJDIR)/csSegdFunctions.o $(CXXFLAGS_JNI)
+
+$(OBJDIR)/csGCS90Header.o:	$(SEGDDIR)/csGCS90Header.cc $(SEGDDIR)/csGCS90Header.h
+			$(CPP) $(SEGDDIR)/csGCS90Header.cc -c -o $(OBJDIR)/csGCS90Header.o $(CXXFLAGS_JNI)
+
+$(OBJDIR)/csNavInterface.o:	$(SEGDDIR)/csNavInterface.cc $(SEGDDIR)/csNavInterface.h
+			$(CPP) $(SEGDDIR)/csNavInterface.cc -c -o $(OBJDIR)/csNavInterface.o $(CXXFLAGS_JNI)
+
+$(OBJDIR)/csNavHeader.o:	$(SEGDDIR)/csNavHeader.cc $(SEGDDIR)/csNavHeader.h
+			$(CPP) $(SEGDDIR)/csNavHeader.cc -c -o $(OBJDIR)/csNavHeader.o $(CXXFLAGS_JNI)
+
+$(OBJDIR)/csSegdHeader_GEORES.o:	$(SEGDDIR)/csSegdHeader_GEORES.cc $(SEGDDIR)/csSegdHeader_GEORES.h
+			$(CPP) $(SEGDDIR)/csSegdHeader_GEORES.cc -c -o $(OBJDIR)/csSegdHeader_GEORES.o $(CXXFLAGS_JNI)
+
+$(OBJDIR)/csSegdHeader_DIGISTREAMER.o:	$(SEGDDIR)/csSegdHeader_DIGISTREAMER.cc $(SEGDDIR)/csSegdHeader_DIGISTREAMER.h
+			$(CPP) $(SEGDDIR)/csSegdHeader_DIGISTREAMER.cc -c -o $(OBJDIR)/csSegdHeader_DIGISTREAMER.o $(CXXFLAGS_JNI)
+
+$(OBJDIR)/csStandardSegdHeader.o:	$(SEGDDIR)/csStandardSegdHeader.cc $(SEGDDIR)/csStandardSegdHeader.h
+			$(CPP) $(SEGDDIR)/csStandardSegdHeader.cc -c -o $(OBJDIR)/csStandardSegdHeader.o $(CXXFLAGS_JNI)
+
+$(OBJDIR)/csSegdHdrValues.o:	$(SEGDDIR)/csSegdHdrValues.cc $(SEGDDIR)/csSegdHdrValues.h
+			$(CPP) $(SEGDDIR)/csSegdHdrValues.cc -c -o $(OBJDIR)/csSegdHdrValues.o $(CXXFLAGS_JNI)
+
+# ---------- RSF ----------
+
+$(OBJDIR)/csRSFHeader.o: src/cs/io/csRSFHeader.cc   src/cs/io/csRSFHeader.h
+	$(CPP) -c src/cs/io/csRSFHeader.cc -o $(OBJDIR)/csRSFHeader.o $(CXXFLAGS_SYSTEM)
+
+$(OBJDIR)/csRSFReader.o: src/cs/io/csRSFReader.cc   src/cs/io/csRSFReader.h
+	$(CPP) -c src/cs/io/csRSFReader.cc -o $(OBJDIR)/csRSFReader.o $(CXXFLAGS_SYSTEM)
+
+
+${LIBDIR}/CSeisLib.jar: ${JAVADIR}/jar/CSeisLib.jar
+	cp ${JAVADIR}/jar/CSeisLib.jar ${LIBDIR}
+
+${LIBDIR}/SeaView.jar: ${JAVADIR}/jar/SeaView.jar
+	cp ${JAVADIR}/jar/SeaView.jar ${LIBDIR}
+
+${BINDIR}/seaview.sh: ${JAVADIR}/bin/seaview.sh
+	cp ${JAVADIR}/bin/seaview.sh ${BINDIR}
+	
+${BINDIR}/plotimage.sh: ${JAVADIR}/bin/plotimage.sh
+	cp ${JAVADIR}/bin/plotimage.sh ${BINDIR}

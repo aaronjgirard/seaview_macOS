@@ -1,0 +1,16 @@
+## build outputs
+build.log
+build_trace.log
+dist/
+
+## packaging staging
+stage/
+
+## macOS noise
+.DS_Store
+**/.DS_Store
+
+## editor / IDE
+.vscode/
+.idea/
+*.swp

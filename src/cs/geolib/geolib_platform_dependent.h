@@ -19,6 +19,7 @@
  #define off64_t off_t
  #define fseeko64 fseeko
  #define ftello64 ftello
+ #define stat64   stat
  
 #elif defined(__sun__) || defined(__sun)
  #define PLATFORM_SOLARIS 1
