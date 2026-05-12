@@ -1,0 +1,35 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite both this macOS port and the upstream OpenSeaSeis project."
+title: "SeaView for macOS: a native Apple Silicon build of OpenSeaSeis"
+abstract: >
+  A macOS port of OpenSeaSeis (Bjorn Olofsson, 2006; maintained by the Colorado
+  School of Mines). Adds a macOS build tree, the source patches required for
+  Apple Clang and modern macOS, an install_name post-link fixup, and a
+  jpackage-based pipeline that produces an ad-hoc-signed SeaView.app bundled
+  into a .dmg with an embedded JRE.
+type: software
+authors:
+  - family-names: Girard
+    given-names: Aaron
+    # orcid: "https://orcid.org/0000-0000-0000-0000"   # uncomment and fill in if you have one
+version: "1.0.1"
+date-released: "2026-05-12"
+repository-code: "https://github.com/aaronjgirard/seaview_macOS"
+url: "https://github.com/aaronjgirard/seaview_macOS"
+keywords:
+  - seismic-processing
+  - SEGY
+  - SeaSeis
+  - OpenSeaSeis
+  - macOS
+  - Apple-Silicon
+doi: "10.5281/zenodo.20143977"
+references:
+  - type: software
+    title: "OpenSeaSeis"
+    authors:
+      - family-names: Olofsson
+        given-names: Bjorn
+    year: 2006
+    repository-code: "https://github.com/JohnWStockwellJr/OpenSeaSeis"
+    notes: "Upstream project; this work ports OpenSeaSeis to macOS and adds packaging."

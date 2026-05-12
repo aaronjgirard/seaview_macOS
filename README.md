@@ -1,5 +1,7 @@
 # SeaView for macOS
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20143977.svg)](https://doi.org/10.5281/zenodo.20143977)
+
 A macOS port of [OpenSeaSeis](https://github.com/JohnWStockwellJr/OpenSeaSeis) (the open-source SeaSeis seismic processing package by Bjorn Olofsson, now maintained by the Colorado School of Mines). The upstream build script is Linux-only and breaks in several places under Apple Clang. This fork adds a macOS build tree, the source patches needed for Apple Clang and modern macOS, and a `jpackage`-based pipeline that produces a drag-installable `SeaView.app` bundled into a `.dmg`.
 
 ## What you get
