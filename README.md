@@ -128,3 +128,7 @@ OpenSeaSeis is © Colorado School of Mines, originally written by Bjorn Olofsson
 - `OpenSeaSeis_LEGAL_STATEMENT` and `LICENSE` at the root of this repo.
 
 This fork only adds the macOS build infrastructure and the source patches above; the seismic-processing code itself is unchanged.
+
+## Acknowledgements
+
+Thanks to **Necati Gülünay** ([n.gulunay@protonmail.com](mailto:n.gulunay@protonmail.com)) for testing the v1.0 and v1.0.1 macOS builds on Apple Silicon and surfacing the Gatekeeper / nested-dylib signing issue that motivated the signed packaging script.
