@@ -131,4 +131,4 @@ This fork only adds the macOS build infrastructure and the source patches above;
 
 ## Acknowledgements
 
-Thanks to **Necati Gülünay** ([n.gulunay@protonmail.com](mailto:n.gulunay@protonmail.com)) for testing the v1.0 and v1.0.1 macOS builds on Apple Silicon and surfacing the Gatekeeper / nested-dylib signing issue that motivated the signed packaging script.
+Thanks to **Necati Gülünay** for testing the v1.0 and v1.0.1 macOS builds on Apple Silicon and surfacing the Gatekeeper / nested-dylib signing issue that motivated the signed packaging script.
