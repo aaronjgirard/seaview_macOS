@@ -15,7 +15,21 @@ A macOS port of [OpenSeaSeis](https://github.com/JohnWStockwellJr/OpenSeaSeis) (
 3. Drag `SeaView.app` to `/Applications`.
 4. Launch from Launchpad or Spotlight; open SEGY files via **File → Open**.
 
-The bundle is unsigned, so on first launch macOS Gatekeeper will block it. Right-click the app → **Open** → **Open** to allow it once. Subsequent launches don't prompt.
+### First launch on macOS
+
+The bundle is ad-hoc signed but not notarized, so Gatekeeper blocks it the first time. On macOS Sequoia and later the right-click-Open shortcut no longer works for non-notarized apps; you have to clear it once from System Settings:
+
+1. Double-click `SeaView.app`. A dialog will appear saying macOS could not verify the app. Click **Done**.
+2. Open **System Settings → Privacy & Security**, scroll to the **Security** section, find the line that says *"SeaView" was blocked…* and click **Open Anyway**.
+3. Authenticate with Touch ID or your password. SeaView launches.
+
+After that first approval, subsequent launches go straight through. If you prefer a one-liner that skips the Settings dance entirely, open Terminal and run:
+
+```bash
+xattr -dr com.apple.quarantine /Applications/SeaView.app
+```
+
+then double-click as normal.
 
 ## Build from source
 
@@ -67,21 +81,12 @@ rm -rf ../lib_v3.00 && ./make_seaseis_macos.sh
 ### Package the `.dmg`
 
 ```bash
-mkdir -p dist stage
-cp ../lib_v3.00/lib/SeaView.jar      stage/
-cp ../lib_v3.00/lib/CSeisLib.jar     stage/
-cp ../lib_v3.00/lib/libcsJNIlib.dylib stage/
-
-jpackage --type dmg --name SeaView \
-    -i stage \
-    --main-jar SeaView.jar \
-    --main-class cseis.seaview.SeaView \
-    --java-options '-Djava.library.path=$APPDIR' \
-    --java-options '--enable-native-access=ALL-UNNAMED' \
-    -d dist
+bash src/make/macos/package_seaview_dmg.sh
 ```
 
-`dist/SeaView-1.0.dmg` is what you ship.
+The script stages the JNI dylib and jars from `lib_v3.00/lib/`, runs `jpackage --type app-image`, ad-hoc-signs the bundle with `codesign --force --deep --sign -`, and then wraps the signed app-image into a dmg. The signing step is what makes the bundle survive Gatekeeper's quarantine check: without it, "Open Anyway" clears the `.app`'s quarantine bit but not the nested `libcsJNIlib.dylib`, and the JVM dies at startup trying to dlopen an unsigned library (Dock icon bounces, then disappears).
+
+`dist/SeaView-1.0.dmg` is what you ship. Override the version with `bash src/make/macos/package_seaview_dmg.sh 1.1`.
 
 ## What this fork changes vs upstream
 
@@ -110,7 +115,8 @@ If you ever rebuild and `seaseis` reports `Library not loaded: libcseis_help.so`
 
 - **RAY2D module disabled.** The `wfront` ray-tracing code uses methods (`getFirstDim`, `getSecondDim`) that are not on `csMatrixFStyle` in this OpenSeaSeis tree. SeaView does not need it. To re-enable it you'd need to fix the source rather than just unmask it in `cseis_modules.txt`.
 - **MPI, FFTW, and SU support are off** in `make_seaseis_macos.sh`. Flip the `BUILD_*` flags at the top of the script if you need them; FFTW will additionally need a Homebrew install and the include/lib paths adjusted.
-- **The `.dmg` is unsigned.** That's fine for distributing to a known user, but Gatekeeper will require the right-click-Open dance on first launch. Signing requires an Apple Developer ID and is out of scope here.
+- **The `.dmg` is ad-hoc signed, not notarized.** Gatekeeper still blocks it on first launch (see "First launch on macOS" above). True one-click installs require an Apple Developer ID and notarization, which are out of scope here.
+- **arm64 only.** The shipped dmg is a thin Mach-O arm64 binary. Intel Macs need to build from source.
 - **Only the JNI consumers were ported.** The XCSeis JNI library (used by the `xseaseis` GUI, a separate app) is intentionally not built — `cmake.sh` skips it.
 
 ## Attribution
