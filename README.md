@@ -1,6 +1,6 @@
 # SeaView for macOS
 
-A macOS port of [OpenSeaSeis](https://github.com/JohnWStockwellJr/OpenSeaSeis) (the open-source SeaSeis seismic processing package by Bjorn Olofsen, now maintained by the Colorado School of Mines). The upstream build script is Linux-only and breaks in several places under Apple Clang. This fork adds a macOS build tree, the source patches needed for Apple Clang and modern macOS, and a `jpackage`-based pipeline that produces a drag-installable `SeaView.app` bundled into a `.dmg`.
+A macOS port of [OpenSeaSeis](https://github.com/JohnWStockwellJr/OpenSeaSeis) (the open-source SeaSeis seismic processing package by Bjorn Olofsson, now maintained by the Colorado School of Mines). The upstream build script is Linux-only and breaks in several places under Apple Clang. This fork adds a macOS build tree, the source patches needed for Apple Clang and modern macOS, and a `jpackage`-based pipeline that produces a drag-installable `SeaView.app` bundled into a `.dmg`.
 
 ## What you get
 
@@ -115,7 +115,7 @@ If you ever rebuild and `seaseis` reports `Library not loaded: libcseis_help.so`
 
 ## Attribution
 
-OpenSeaSeis is © Colorado School of Mines, originally written by Bjorn Olofsen (2006). See the upstream repo for the full copyright and license:
+OpenSeaSeis is © Colorado School of Mines, originally written by Bjorn Olofsson (2006). See the upstream repo for the full copyright and license:
 - <https://github.com/JohnWStockwellJr/OpenSeaSeis>
 - `OpenSeaSeis_LEGAL_STATEMENT` and `LICENSE` at the root of this repo.
 
