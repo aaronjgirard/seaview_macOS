@@ -11,7 +11,7 @@ type: software
 authors:
   - family-names: Girard
     given-names: Aaron
-    # orcid: "https://orcid.org/0000-0000-0000-0000"   # uncomment and fill in if you have one
+    orcid: "https://orcid.org/0000-0002-1455-2514"
 version: "1.0.1"
 date-released: "2026-05-12"
 repository-code: "https://github.com/aaronjgirard/seaview_macOS"
