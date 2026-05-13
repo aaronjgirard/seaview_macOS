@@ -117,6 +117,7 @@ If you ever rebuild and `seaseis` reports `Library not loaded: libcseis_help.so`
 
 - **RAY2D module disabled.** The `wfront` ray-tracing code uses methods (`getFirstDim`, `getSecondDim`) that are not on `csMatrixFStyle` in this OpenSeaSeis tree. SeaView does not need it. To re-enable it you'd need to fix the source rather than just unmask it in `cseis_modules.txt`.
 - **MPI, FFTW, and SU support are off** in `make_seaseis_macos.sh`. Flip the `BUILD_*` flags at the top of the script if you need them; FFTW will additionally need a Homebrew install and the include/lib paths adjusted.
+- **SeaView cannot open Seismic Unix (`.su`) files.** The viewer's JNI bridge only reads SEGY, SeaSeis (`.cseis` / `.oseis`), SEGD, and RSF — there is no native `.su` reader, and the `src/cs/su/` tree only provides command-line wrappers around classic SU utilities, not a GUI input path. To view a `.su` file in SeaView, convert it to SEGY first (e.g. `segyhdrs < in.su | segywrite tape=out.sgy`).
 - **The `.dmg` is ad-hoc signed, not notarized.** Gatekeeper still blocks it on first launch (see "First launch on macOS" above). True one-click installs require an Apple Developer ID and notarization, which are out of scope here.
 - **arm64 only.** The shipped dmg is a thin Mach-O arm64 binary. Intel Macs need to build from source.
 - **Only the JNI consumers were ported.** The XCSeis JNI library (used by the `xseaseis` GUI, a separate app) is intentionally not built — `cmake.sh` skips it.
